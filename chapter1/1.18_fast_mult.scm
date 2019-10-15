@@ -1,0 +1,32 @@
+; iterative, linear
+(define (slow-mult a b)
+  (define (mult accum count)
+    (if (= count 1)
+      accum
+      (mult (+ accum a) (- count 1))
+      )
+    )
+  (cond ((or (= a 0) (= b 0)) 0)
+        ((= a 1) b)
+	(else (mult a b))
+        )
+  )
+
+; iterative, logatithmic
+(define (fast-mult a b)
+  (define (double n) (* n 2))
+  (define (half n) (/ n 2))
+  (define (iter a b)
+    (cond ((= b 1) a)
+	  ((even? b) (iter (double a) (half b)))
+	  (else (iter (+ a b) (- b 1)))
+	  )
+    )
+  (cond ((or (= a 0) (= b 0)) 0)
+	((= a 1) b)
+	(else (iter a b))
+	)
+  )
+
+(fast-mult 45 8)
+(slow-mult 45 8)
