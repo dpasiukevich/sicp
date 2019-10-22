@@ -1,0 +1,30 @@
+(define (count-pairs input)
+  (define visited '())
+  (define (iter x)
+    (cond ((or (not (pair? x))
+               (memq x visited)) 0)
+          (else (set! visited (cons x visited))
+                (+ (iter (car x))
+                   (iter (cdr x))
+                   1))))
+  (iter input))
+
+(define (count-pairs-orig x)
+  (if (not (pair? x))
+      0
+      (+ (count-pairs-orig (car x)) (count-pairs-orig (cdr x)) 1)))
+
+(define x (cons 'b '()))
+
+(count-pairs '())
+(count-pairs (cons (cons 'a '()) (cons 'b '())))
+(count-pairs (cons (cons 'a x) x))
+
+(define x '(foo)) 
+(define y (cons '(a) '(b))) 
+(define str2 (list y)) 
+    (define str3 (cons y y)) 
+(count-pairs str2)
+(count-pairs-orig str2)
+(count-pairs str3)
+(count-pairs-orig str3)

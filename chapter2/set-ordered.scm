@@ -1,0 +1,35 @@
+(define (element-of-set-ordered? x set)
+  (cond ((null? set) false)
+	((= x (car set)) true)
+	((< x (car set)) false)
+	(else (element-of-set-ordered? x (cdr set)))))
+
+(define (intersection-set-ordered set1 set2)
+  (if (or (null? set1) (null? set2))
+    '()
+    (let ((x1 (car set1))  (x2 (car set2)))
+      (cond ((= x1 x2)
+	     (cons x1
+		   (intersection-set-ordered (cdr set1)
+					     (cdr set2))))
+	    ((< x1 x2)
+	     (intersection-set-ordered (cdr set1) set2))
+	    ((< x2 x1)
+	     (intersection-set-ordered set1 (cdr set2)))))))
+
+(define (adjoin-set-ordered el set)
+  (cond ((or (null? set) (< el set)) (cons el set))
+	((= el (car set)) set)
+	(else (cons (car set) (adjoin-set-ordered el (cdr set))))))
+
+(define (union-set-ordered s1 s2)
+  (if (or (null? s1) (null? s2))
+    (append s1 s2)
+    (let ((el1 (car s1))
+	  (el2 (car s2)))
+      (cond ((= el1 el2) (cons el1 (union-set (cdr s1) (cdr s2))))
+	    ((< el1 el2) (cons el1 (union-set (cdr s1) s2)))
+	    (else (cons el2 (union-set s1 (cdr s2))))))))
+
+(define (lookup-ordered-set key set)
+  (car (memq key set))) ; linear as i dont know how to do random access on list for binary search yet
