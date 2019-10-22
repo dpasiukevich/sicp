@@ -1,0 +1,23 @@
+(load "numbers-imaginary.scm")
+
+(define (install-real-package)
+  (define (tag x) (attach-tag 'real x))
+  (put 'add '(real real)
+       (lambda (x y) (tag (+ x y))))
+  (put 'sub '(real real)
+       (lambda (x y) (tag (- x y))))
+  (put 'mul '(real real)
+       (lambda (x y) (tag (* x y))))
+  (put 'div '(real real)
+       (lambda (x y) (tag (/ x y))))
+  (put 'make 'real (lambda (x) (tag x)))
+  (put 'equ '(real real)
+       (lambda (x y) (= x y)))
+  (put '=zero? '(real) zero?)
+  (put 'raise '(real)
+       (lambda (x) (make-complex-from-real-imag x 0)))
+  'done)
+
+(define (make-real n)
+  ((get 'make 'real) n))
+

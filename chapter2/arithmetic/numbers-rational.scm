@@ -1,3 +1,5 @@
+(load "numbers-real.scm")
+
 (define (install-rational-package)
   ;; internal procedures
   (define (numer x) (car x))
@@ -35,6 +37,7 @@
        (lambda (x y) (and (= (denom x) (denom y))
                           (= (numer x) (numer y)))))
   (put '=zero? '(rational) (lambda (n) (= (denom n) 0)))
+  (put 'raise '(rational) (lambda (n) (make-real (* 1.0 (/ (numer n) (denom n))))))
   'done)
 
 (define (make-rational n d)

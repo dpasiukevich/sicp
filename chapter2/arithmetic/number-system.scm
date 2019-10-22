@@ -15,15 +15,13 @@
 
 (load "dispatcher.scm")
 (load "numbers-scheme.scm")
-(load "numbers-imaginary.scm")
 (load "numbers-rational.scm")
-(install-complex-package)
+(load "numbers-real.scm")
+(load "numbers-imaginary.scm")
 (install-scheme-number-package)
 (install-rational-package)
-
-(add n2 c1)
-
-(add c1 n2)
+(install-real-package)
+(install-complex-package)
 
 ; DEFINE GENERIC METHODS FOR ARITHMETIC SYSTEM
 (define (add x y) (apply-generic 'add x y))
@@ -34,35 +32,36 @@
 (define (equ? n1 n2) (apply-generic 'equ n1 n2))
 (define (=zero? n) (apply-generic '=zero? n))
 
+(define (raise-num n) (apply-generic 'raise n))
 
 ; using package
 
 (define c1 (make-complex-from-real-imag 3 3))
-
 (define c2 (make-complex-from-mag-ang 3 30))
 
 c1
-
 c2
-
-(magnitude c1)
 
 (add c1 c2)
 
 (equ? c1 c2)
 
-(=zero? c1)
+(=zero? c2)
 
-(define n1 (make-scheme-number 0))
-
+(define n1 (make-scheme-number 10))
 (define n2 (make-scheme-number 22))
 
 (add n1 n2)
 
 (equ? n1 n2)
 
-(add n1 c1)
-
-n1
+(add n2 c1)
 
 (=zero? n1)
+
+(define r1 (make-real 0.5))
+(define r2 (make-real 0.7))
+
+(add n1 r1)
+
+(add r1 c1)
