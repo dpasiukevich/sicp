@@ -91,7 +91,7 @@
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
        (lambda (r a) (tag (make-from-mag-ang r a))))
-  (put 'equ '(complex complex)
+  (put 'equ? '(complex complex)
        (lambda (x y) (and (= (real-part x) (real-part y))
                           (= (imag-part x) (imag-part y)))))
   (put '=zero? '(complex) (lambda (n) (and (= (real-part n) 0) (= (imag-part n) 0))))
@@ -99,5 +99,6 @@
   (put 'imag-part '(complex) imag-part)
   (put 'magnitude '(complex) magnitude)
   (put 'angle '(complex) angle)
+  (put 'project 'complex (lambda (x) (make-real (real-part x)))) 
   'done)
 

@@ -33,11 +33,12 @@
        (lambda (x y) (tag (div-rat x y))))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
-  (put 'equ '(rational rational)
-       (lambda (x y) (and (= (denom x) (denom y))
-                          (= (numer x) (numer y)))))
+  (put 'equ? '(rational rational)
+       (lambda (x y) (= (* (denom x) (numer y)) (* (denom y) (numer x)))))
   (put '=zero? '(rational) (lambda (n) (= (denom n) 0)))
-  (put 'raise '(rational) (lambda (n) (make-real (* 1.0 (/ (numer n) (denom n))))))
+  (put 'raise-num '(rational) (lambda (n) (make-real (* 1.0 (/ (numer n) (denom n))))))
+  (put 'project 'rational
+       (lambda (x) (make-scheme-number (round (/ (numer x) (denom x)))))) 
   'done)
 
 (define (make-rational n d)

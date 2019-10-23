@@ -17,7 +17,7 @@
 (load "numbers-scheme.scm")
 (load "numbers-rational.scm")
 (load "numbers-real.scm")
-(load "numbers-imaginary.scm")
+(load "numbers-complex.scm")
 (install-scheme-number-package)
 (install-rational-package)
 (install-real-package)
@@ -29,10 +29,18 @@
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
 
-(define (equ? n1 n2) (apply-generic 'equ n1 n2))
+(define (equ? n1 n2) (apply-generic 'equ? n1 n2))
 (define (=zero? n) (apply-generic '=zero? n))
+(define (raise-num n) (apply-generic 'raise-num n))
 
-(define (raise-num n) (apply-generic 'raise n))
+(define (drop x)
+  (let ((project-proc (get 'project (type-tag x))))
+   (if project-proc
+       (let ((project-number (project-proc (contents x))))
+        (if (equ? x (raise-num project-number))
+            (drop project-number)
+            x))
+       x))) 
 
 ; using package
 
@@ -61,6 +69,8 @@ c2
 
 (define r1 (make-real 0.5))
 (define r2 (make-real 0.7))
+
+(add r1 r2)
 
 (add n1 r1)
 

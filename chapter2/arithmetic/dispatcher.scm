@@ -22,11 +22,12 @@
           (error "No method for these types" (list op type-tags))
           (map (lambda (rank arg) (func-apply raise-num (- max-rank rank) arg)) type-ranks args)))))
   (let ((type-tags (map type-tag args)))
-   (let ((proc (get op type-tags))
-         (type-ranks (map (lambda (type) (hash-table/get ranks type -1)) type-tags)))
+   (let ((proc (get op type-tags)))
     (if proc
-        (apply proc (map contents args))
-        (apply apply-generic (append (list op) (coerce-by-ranks type-tags args))))))) ; used to unpack list of updated arguments returned by 
+        (if (memq op '(add sub mul div))
+            (drop (apply proc (map contents args))) 
+            (apply proc (map contents args)))
+        (apply apply-generic (cons op (coerce-by-ranks type-tags args)))))))
 
 (define (attach-tag type-tag contents)
   (if (exact-integer? contents)

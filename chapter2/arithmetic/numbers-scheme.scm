@@ -11,10 +11,10 @@
   (put 'div '(scheme-number scheme-number)
        (lambda (x y) (tag (/ x y))))
   (put 'make 'scheme-number (lambda (x) (tag x)))
-  (put 'equ '(scheme-number scheme-number)
+  (put 'equ? '(scheme-number scheme-number)
        (lambda (x y) (= x y)))
   (put '=zero? '(scheme-number) zero?)
-  (put 'raise '(scheme-number)
+  (put 'raise-num '(scheme-number)
        (lambda (x) (make-rational x 1)))
   'done)
 
