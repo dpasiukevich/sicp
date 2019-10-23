@@ -108,4 +108,3 @@
 (mul n1 c1)
 (div n1 c1)
 (equ? n1 c1)
-
