@@ -4,6 +4,7 @@
   ;; internal procedures
   (define (numer x) (car x))
   (define (denom x) (cdr x))
+  (define (as-real x) (/ (numer x) (denom x)))
   (define (make-rat n d)
     (let ((g (gcd n d)))
      (cons (/ n g) (/ d g))))
@@ -39,6 +40,11 @@
   (put 'raise-num '(rational) (lambda (n) (make-real (* 1.0 (/ (numer n) (denom n))))))
   (put 'project 'rational
        (lambda (x) (make-scheme-number (round (/ (numer x) (denom x)))))) 
+  (put 'sin-num '(rational) (lambda (x) (make-real (sin (as-real x)))))
+  (put 'cos-num '(rational) (lambda (x) (make-real (cos (as-real x)))))
+  (put 'atan-num '(rational) (lambda (x) (make-real (atan (as-real x)))))
+  (put 'square-num '(rational) (lambda (x) (tag (make-rat (square (numer x)) (square (denom x))))))
+  (put 'sqrt-num '(rational) (lambda (x) (make-real (sqrt (as-real x)))))
   'done)
 
 (define (make-rational n d)

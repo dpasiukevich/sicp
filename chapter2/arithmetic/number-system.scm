@@ -10,9 +10,6 @@
 (define (put-coercion type1 type2 func)
   (hash-table-set! coercion-table (list type1 type2) func))
 
-(define (simple->complex n) (make-complex-from-real-imag n 0))
-(put-coercion 'scheme-number 'complex simple->complex)
-
 (load "dispatcher.scm")
 (load "numbers-scheme.scm")
 (load "numbers-rational.scm")
@@ -29,6 +26,12 @@
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
 
+(define (sin-num x) (apply-generic 'sin-num x))
+(define (cos-num x) (apply-generic 'cos-num x))
+(define (atan-num x) (apply-generic 'atan-num x))
+(define (square-num x) (apply-generic 'square-num x))
+(define (sqrt-num x) (apply-generic 'sqrt-num x))
+
 (define (equ? n1 n2) (apply-generic 'equ? n1 n2))
 (define (=zero? n) (apply-generic '=zero? n))
 (define (raise-num n) (apply-generic 'raise-num n))
@@ -41,6 +44,8 @@
             (drop project-number)
             x))
        x))) 
+
+(make-rational 5 1)
 
 ; using package
 

@@ -24,23 +24,21 @@
   (let ((type-tags (map type-tag args)))
    (let ((proc (get op type-tags)))
     (if proc
-        (if (memq op '(add sub mul div))
+        (if (memq op '(add sub mul div make))
             (drop (apply proc (map contents args))) 
             (apply proc (map contents args)))
         (apply apply-generic (cons op (coerce-by-ranks type-tags args)))))))
 
 (define (attach-tag type-tag contents)
-  (if (exact-integer? contents)
-      contents
-      (cons type-tag contents)))
+  (cons type-tag contents))
 
 (define (type-tag datum)
-  (cond ((exact-integer? datum) 'scheme-number)
-        ((pair? datum) (car datum))
-        (else (error "Bad tagged datum: TYPE-TAG" datum))))
+  (if (pair? datum)
+      (car datum)
+      (else (error ("bad tagged datum: TYPE-TAG" datum)))))
 
 (define (contents datum)
-  (cond ((exact-integer? datum) datum)
-        ((pair? datum) (cdr datum))
-        (else (error "Bad tagged datum: CONTENTS" datum))))
+  (if (pair? datum)
+      (cdr datum)
+      (error "Bad tagged datum: CONTENTS" datum)))
 

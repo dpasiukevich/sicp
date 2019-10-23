@@ -23,6 +23,11 @@
            (make-rational
              (numerator rat)
              (denominator rat))))) 
+  (put 'sin-num '(real) (lambda (x) (tag (sin x))))
+  (put 'cos-num '(real) (lambda (x) (tag (cos x))))
+  (put 'atan-num '(real) (lambda (x) (tag (atan x))))
+  (put 'square-num '(real) (lambda (x) (tag (square x))))
+  (put 'sqrt-num '(real) (lambda (x) (tag (sqrt x))))
   'done)
 
 (define (make-real n)
