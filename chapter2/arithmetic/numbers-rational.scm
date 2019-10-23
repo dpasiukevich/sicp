@@ -37,7 +37,9 @@
   (put 'equ? '(rational rational)
        (lambda (x y) (= (* (denom x) (numer y)) (* (denom y) (numer x)))))
   (put '=zero? '(rational) (lambda (n) (= (denom n) 0)))
-  (put 'raise-num '(rational) (lambda (n) (make-real (* 1.0 (/ (numer n) (denom n))))))
+  (put 'raise-num '(rational) (lambda (n)
+                                (let ((res (* 1.0 (/ (numer n) (denom n)))))
+                                 (make-real (if (= res 0) 0.0 res)))))
   (put 'project 'rational
        (lambda (x) (make-scheme-number (round (/ (numer x) (denom x)))))) 
   (put 'sin-num '(rational) (lambda (x) (make-real (sin (as-real x)))))

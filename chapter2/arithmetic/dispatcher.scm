@@ -30,17 +30,19 @@
         (apply apply-generic (cons op (coerce-by-ranks type-tags args)))))))
 
 (define (attach-tag type-tag contents)
-  (if (exact-integer? contents)
-      contents
-      (cons type-tag contents)))
+  (cond ((exact-integer? contents) contents)
+        ((real? contents) contents)
+        (else (cons type-tag contents))))
 
 (define (type-tag datum)
   (cond ((exact-integer? datum) 'scheme-number) 
+        ((real? datum) 'real)
         ((pair? datum) (car datum))
         (else (error "bad tagged datum: TYPE-TAG" datum))))
 
 (define (contents datum)
   (cond ((exact-integer? datum) datum)
+        ((real? datum) datum)
         ((pair? datum) (cdr datum))
         (else (error "Bad tagged datum: CONTENTS" datum))))
 
