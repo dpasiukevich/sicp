@@ -45,38 +45,67 @@
             x))
        x))) 
 
-(make-rational 5 1)
-
 ; using package
 
+; test complex
 (define c1 (make-complex-from-real-imag 3 3))
 (define c2 (make-complex-from-mag-ang 3 30))
-
-c1
-c2
-
 (add c1 c2)
-
+(sub c1 c2)
+(mul c1 c2)
+(div c1 c2)
 (equ? c1 c2)
-
 (=zero? c2)
 
+; test scheme number
 (define n1 (make-scheme-number 10))
 (define n2 (make-scheme-number 22))
-
 (add n1 n2)
-
+(sub n1 n2)
+(mul n1 n2)
+(div n1 n2)
 (equ? n1 n2)
-
-(add n2 c1)
-
 (=zero? n1)
+(sin-num n1)
+(cos-num n1)
+(atan-num n1)
+(square-num n1)
+(sqrt-num n1)
 
+; test real
 (define r1 (make-real 0.5))
 (define r2 (make-real 0.7))
-
 (add r1 r2)
+(sub r1 r2)
+(mul r1 r2)
+(div r1 r2)
+(equ? r1 r2)
+(=zero? r1)
+(sin-num r1)
+(cos-num r1)
+(atan-num r1)
+(square-num r1)
+(sqrt-num r1)
 
-(add n1 r1)
+; test rational
+(define rat1 (make-rational 4 3))
+(define rat2 (make-rational 5 8))
+(add rat1 rat2)
+(sub rat1 rat2)
+(mul rat1 rat2)
+(div rat1 rat2)
+(equ? rat1 rat2)
+(=zero? rat1)
+(sin-num rat1)
+(cos-num rat1)
+(atan-num rat1)
+(square-num rat1)
+(sqrt-num rat1)
 
-(add r1 c1)
+; test type coercion
+(add n1 n1)
+(sub n1 c1)
+(mul n1 c1)
+(div n1 c1)
+(equ? n1 c1)
+
