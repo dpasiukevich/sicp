@@ -94,4 +94,4 @@
 (define (coeff term) (cadr term))
 
 (define (make-polynomial var terms)
-  ((get 'make 'polynomial) var terms))
+  ((get 'make 'polynomial) var (make-term-list terms)))
