@@ -20,8 +20,9 @@
   (put 'sin-num '(scheme-number) (lambda (x) (make-real (sin x))))
   (put 'cos-num '(scheme-number) (lambda (x) (make-real (cos x))))
   (put 'atan-num '(scheme-number) (lambda (x) (make-real (atan x))))
-  (put 'square-num '(scheme-number) (lambda (x) (tag (square x))))
+  (put 'square-num '(scheme-number) (lambda (x) (square x)))
   (put 'sqrt-num '(scheme-number) (lambda (x) (make-real (sqrt x))))
+  (put 'negate '(scheme-number) (lambda (x) (- x)))
   'done)
 
 (define (make-scheme-number n)

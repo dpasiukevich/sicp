@@ -47,6 +47,7 @@
   (put 'atan-num '(rational) (lambda (x) (make-real (atan (as-real x)))))
   (put 'square-num '(rational) (lambda (x) (tag (make-rat (square (numer x)) (square (denom x))))))
   (put 'sqrt-num '(rational) (lambda (x) (make-real (sqrt (as-real x)))))
+  (put 'negate '(rational) (lambda (x) (tag (make-rat (- (numer x)) (denom x)))))
   'done)
 
 (define (make-rational n d)

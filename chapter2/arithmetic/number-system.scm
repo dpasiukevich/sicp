@@ -15,10 +15,12 @@
 (load "numbers-rational.scm")
 (load "numbers-real.scm")
 (load "numbers-complex.scm")
+(load "polynomials.scm")
 (install-scheme-number-package)
 (install-rational-package)
 (install-real-package)
 (install-complex-package)
+(install-polynomial-package)
 
 ; DEFINE GENERIC METHODS FOR ARITHMETIC SYSTEM
 (define (add x y) (apply-generic 'add x y))
@@ -32,10 +34,10 @@
 (define (square-num x) (apply-generic 'square-num x))
 (define (sqrt-num x) (apply-generic 'sqrt-num x))
 
+(define (negate n) (apply-generic 'negate n))
 (define (equ? n1 n2) (apply-generic 'equ? n1 n2))
 (define (=zero? n) (apply-generic '=zero? n))
 (define (raise-num n) (apply-generic 'raise-num n))
-
 (define (drop x)
   (let ((project-proc (get 'project (type-tag x))))
    (if project-proc
@@ -47,6 +49,25 @@
 
 ; using package
 
+; test polynomials
+(define p1 (make-polynomial 'x (make-term-list
+                                 (list (cons 2 3)
+                                       (cons 1 (make-complex-from-real-imag 2 3))
+                                       (cons 0 7)))))
+(define p2 (make-polynomial 'x (make-term-list
+                                 (list (cons 4 1)
+                                       (cons 2 (make-rational 2 3))
+                                       (cons 0 (make-complex-from-real-imag 5 3))))))
+
+p1
+p2
+
+(add p1 p2)
+(sub p1 p2)
+(mul p1 p2)
+(negate p1)
+(=zero? p1)
+
 ; test complex
 (define c1 (make-complex-from-real-imag 3 3))
 (define c2 (make-complex-from-mag-ang 3 30))
@@ -56,6 +77,7 @@
 (div c1 c2)
 (equ? c1 c2)
 (=zero? c2)
+(negate c1)
 
 ; test scheme number
 (define n1 (make-scheme-number 10))
@@ -71,6 +93,7 @@
 (atan-num n1)
 (square-num n1)
 (sqrt-num n1)
+(negate n1)
 
 ; test real
 (define r1 (make-real 0.5))
@@ -86,6 +109,7 @@
 (atan-num r1)
 (square-num r1)
 (sqrt-num r1)
+(negate r1)
 
 ; test rational
 (define rat1 (make-rational 4 3))
@@ -101,6 +125,7 @@
 (atan-num rat1)
 (square-num rat1)
 (sqrt-num rat1)
+(negate rat1)
 
 ; test type coercion
 (add n1 n1)

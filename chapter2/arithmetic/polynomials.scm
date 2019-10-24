@@ -8,25 +8,37 @@
   (define (same-variable? v1 v2) (and (variable? v1)
                                       (variable? v2)
                                       (eqv? v1 v2)))
+  (define (check-polynoms-variables p1 p2) (same-variable (variable p1) (variable p2)))
   ;; representation of terms and term lists
-  (define (add-poly p1 p2) ("TODO IMPLEMENT"))
-  (define (mul-poly p1 p2) ("TODO IMPLEMENT"))
-  (define (sub-poly p1 p2) ("TODO IMPLEMENT"))
+  (define (map-poly func p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (make-polynomial (variable p1) (func (term-list p1) (term-list p2)))
+        (error "Different variables for given polynomials: " p1 p2)))
+  (define (add-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (make-poly (variable p1) (add-terms (term-list p1) (term-list p2)))))
+  (define (mul-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (make-poly (variable p1) (mul-terms (term-list p1) (term-list p2)))))
+  (define (sub-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (make-poly (variable p1) (add-terms (term-list p1) (negate-terms (term-list p2))))))
   ;; interface to rest of the system
   (define (tag p) (attach-tag 'polynomial p))
   (put 'add '(polynomial polynomial)
        (lambda (p1 p2) (tag (add-poly p1 p2))))
   (put 'sub '(polynomial polynomial)
-       (lambda (p1 p2) (tag (sub)))
-       )
+       (lambda (p1 p2) (tag (sub-poly p1 p2))))
   (put 'mul '(polynomial polynomial)
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
   (put 'make 'polynomial
        (lambda (var terms) (tag (make-poly var terms))))
   (put '=zero? '(polynomial) (lambda (p) (empty-termlist? (term-list p))))
+  (put 'negate '(polynomial) (lambda (p) (tag (make-poly (variable p)
+                                                         (negate-terms (term-list p))))))
   'done)
 
-(define (map-terms func L1 L2)
+(define (add-terms L1 L2)
   (cond ((empty-termlist? L1) L2)
         ((empty-termlist? L2) L1)
         (else
@@ -39,12 +51,14 @@
                   (else
                     (adjoin-term
                       (make-term (order t1)
-                                 (func (coeff t1) (coeff t2)))
-                      (map-terms (rest-terms L1)
+                                 (add (coeff t1) (coeff t2)))
+                      (add-terms (rest-terms L1)
                                  (rest-terms L2)))))))))
 
-(define (add-terms L1 L2) (map-terms add L1 L2))
-(define (sub-terms L1 L2) (map-terms sub L1 L2)) ; pacanchiki realizovali cheres negate, esli budut bagi - mozno cheknut'
+(define (negate-terms terms)
+  (map (lambda (term)
+         (make-term (order term)
+                    (negate (coeff term)))) terms))
 
 (define (mul-terms L1 L2)
   (if (empty-termlist? L1)
@@ -70,6 +84,12 @@
 (define (rest-terms term-list) (cdr term-list))
 (define (empty-termlist? term-list) (null? term-list))
 (define (make-term order coeff) (list order coeff))
+(define (make-term-list order-coeff-pairs)
+  (define (iter L)
+    (if (null? L)
+        L
+        (adjoin-term (make-term (caar L) (cdar L)) (iter (cdr L)))))
+  (iter order-coeff-pairs))
 (define (order term) (car term))
 (define (coeff term) (cadr term))
 

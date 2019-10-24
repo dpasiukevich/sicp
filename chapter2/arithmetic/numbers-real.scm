@@ -28,6 +28,7 @@
   (put 'atan-num '(real) (lambda (x) (tag (atan x))))
   (put 'square-num '(real) (lambda (x) (tag (square x))))
   (put 'sqrt-num '(real) (lambda (x) (tag (sqrt x))))
+  (put 'negate '(real) (lambda (x) (- x)))
   'done)
 
 (define (make-real n)
