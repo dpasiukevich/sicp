@@ -71,8 +71,6 @@ p2
 
 (div p1 p2) ; returns list: res + remainder
 
-(define div-res (div p1 p2))
-
 (mul p1 (car (div p1 p2))) ; res of division is empty list, testing mul of poly on empty
 
 (define p3 (make-sparse-polynomial 'x (list (list 4 1)
