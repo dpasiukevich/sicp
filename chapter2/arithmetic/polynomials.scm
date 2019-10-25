@@ -71,6 +71,11 @@
   (define (sub-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
         (make-poly (variable p1) (add-terms (term-list p1) (negate-terms (term-list p2))))))
+  (define (div-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (let ((result (div-terms (term-list p1) (term-list p2))))
+         (list (make-poly (variable p1) (car result))
+               (make-poly (variable p1) (cadr result))))))
   (define (tag p) (attach-tag 'polynomial p))
   ;; interface to rest of the system
   (install-sparse-term-list-package)
@@ -81,6 +86,10 @@
        (lambda (p1 p2) (tag (sub-poly p1 p2))))
   (put 'mul '(polynomial polynomial)
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
+  (put 'div '(polynomial polynomial)
+       (lambda (p1 p2) (let ((result (div-poly p1 p2)))
+                        (list (tag (car result))
+                              (tag (cadr result))))))
   (put 'make 'polynomial
        (lambda (var terms) (tag (make-poly var terms))))
   (put '=zero? '(polynomial) (lambda (p) (empty-termlist? (term-list p))))
@@ -128,6 +137,24 @@
                     (mul (coeff t1) (coeff t2)))
          (mul-term-by-all-terms t1 (rest-terms L))))))
 
+(define (div-terms L1 L2)
+  (if (empty-termlist? L1)
+      (list L1 L1)
+      (let ((t1 (first-term L1))
+            (t2 (first-term L2)))
+        (if (> (order t2) (order t1))
+            (list (make-empty-sparse-term-list) L1)
+            (let ((new-c (div (coeff t1) (coeff t2)))
+                  (new-o (- (order t1) (order t2))))
+              (let ((rest-of-result
+                      (div-terms (add-terms
+                                   L1
+                                   (negate-terms (mul-term-by-all-terms
+                                                   (make-term new-o new-c)
+                                                   L2)))
+                                 L2)))
+                (list (adjoin-term (make-term new-o new-c) (car rest-of-result)) (cadr rest-of-result))))))))
+
 (define (adjoin-term term term-list)
   (if (=zero? (coeff term))
       term-list
@@ -139,6 +166,8 @@
   (apply-generic 'rest-terms term-list))
 (define (empty-termlist? term-list)
   (apply-generic 'empty-termlist? term-list))
+
+(define (make-empty-sparse-term-list) (list 'sparse-term-list)) ; tupo pohui, ne delal via generics
 
 (define (make-term order coeff) (list order coeff))
 (define (order term) (car term))

@@ -51,7 +51,6 @@
 
 ; test polynomials
 (define p1 (make-dense-polynomial 'x (list 3 (make-complex-from-real-imag 2 3) 7)))
-
 (define p2 (make-sparse-polynomial 'x (list (list 4 1)
                                             (list 2 (make-rational 2 3))
                                             (list 0 (make-complex-from-real-imag 5 3)))))
@@ -69,6 +68,20 @@ p2
 (sub p2 p1)
 (mul p1 p2)
 (mul p2 p1)
+
+(div p1 p2) ; returns list: res + remainder
+
+(define div-res (div p1 p2))
+
+(mul p1 (car (div p1 p2))) ; res of division is empty list, testing mul of poly on empty
+
+(define p3 (make-sparse-polynomial 'x (list (list 4 1)
+                                            (list 0 -1))))
+(define p4 (make-dense-polynomial 'x (list 1 0 -1)))
+
+p1
+p2
+(div p3 p4)
 
 ; test complex
 (define c1 (make-complex-from-real-imag 3 3))
