@@ -50,17 +50,25 @@
 ; using package
 
 ; test polynomials
-(define p1 (make-polynomial 'x (list (cons 2 3)
-                                     (cons 1 (make-complex-from-real-imag 2 3))
-                                     (cons 0 7))))
-(define p2 (make-polynomial 'x (list (cons 4 1)
-                                     (cons 2 (make-rational 2 3))
-                                     (cons 0 (make-complex-from-real-imag 5 3)))))
-(add p1 p2)
-(sub p1 p2)
-(mul p1 p2)
-(negate p1)
+(define p1 (make-dense-polynomial 'x (list 3 (make-complex-from-real-imag 2 3) 7)))
+
+(define p2 (make-sparse-polynomial 'x (list (list 4 1)
+                                            (list 2 (make-rational 2 3))
+                                            (list 0 (make-complex-from-real-imag 5 3)))))
+
+p1
+p2
+
 (=zero? p1)
+(=zero? p2)
+(negate p1)
+(negate p2)
+(add p1 p2)
+(add p2 p1)
+(sub p1 p2)
+(sub p2 p1)
+(mul p1 p2)
+(mul p2 p1)
 
 ; test complex
 (define c1 (make-complex-from-real-imag 3 3))
