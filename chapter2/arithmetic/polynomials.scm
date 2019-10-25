@@ -131,12 +131,6 @@
 (define (adjoin-term term term-list)
   (if (=zero? (coeff term))
       term-list
-      (cons term term-list)))
-
-
-(define (adjoin-term term term-list)
-  (if (=zero? (coeff term))
-      term-list
       ((apply-generic 'adjoin-term-func term-list) term)))
 
 (define (first-term term-list)
@@ -153,11 +147,10 @@
 ; dense polynomial has terms of most orders, represented as list of coefficients
 ; coef at index 0 has order L-1, last element has order 0
 (define (make-dense-polynomial var terms)
-  ((get 'make 'polynomial) var
-                           ((get 'make 'dense-term-list) terms)))
+  ((get 'make 'polynomial) var ((get 'make 'dense-term-list) terms)))
 
 ; sparse polynomial don't have terms in most orders: x**100 + 5*x**2 + 5
 ; so it's represented as list of pairs (order coeff)
 (define (make-sparse-polynomial var terms)
-  ((get 'make 'polynomial) var
-                           ((get 'make 'sparse-term-list) terms)))
+  ((get 'make 'polynomial) var ((get 'make 'sparse-term-list) terms)))
+
