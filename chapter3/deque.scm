@@ -76,23 +76,11 @@
 (define (display-deque deque) (deque 'display-deque))
 
 (define deque (make-deque))
-
 (empty-deque? deque)
-
 (front-insert-deque! deque 15)
-
 (rear-insert-deque! deque 1)
-
 (empty-deque? deque)
-
 (display-deque deque)
-
 (rear-insert-deque! deque 10)
-
 (front-delete-deque! deque)
-
 (rear-delete-deque! deque)
-
-
-
-
