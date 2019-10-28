@@ -32,9 +32,3 @@
 
 (define (print-queue queue)
   (display (front-ptr queue)))
-
-(define q1 (make-queue))
-
-(insert-queue! q1 'a)
-(insert-queue! q1 'b)
-(print-queue q1)
