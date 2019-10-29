@@ -1,5 +1,3 @@
-(define same-key? equal?)
-
 (define (make-table same-key?)
   (define (assoc key records)
     (cond ((null? records) #f)
@@ -40,6 +38,18 @@
 (define operation-table (make-table equal?))
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
+
+(put '(letters a) 97)
+(put '(letters b) 98)
+
+(put '(math +) 43)
+(put '(math -) 45)
+(put '(math *) 42)
+
+(get '(letters b))
+(get '(dfashoigrar asdfasdf retaqw))
+
+(get '(math))
 
 (put '(x y) 15)
 (put '(x) 150)
