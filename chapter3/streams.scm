@@ -236,5 +236,27 @@
 (define pairs-ordered-by-sum
   (weighted-pairs (lambda (P) (+ (car P) (cadr P))) integers integers))
 
-(stream-head pairs-ordered-by-sum 5)
+(define (integral integrand initial-value dt)
+  (define int
+    (cons-stream initial-value
+                 (add-streams (stream-scale integrand dt)
+                              int)))
+  int)
+
+(define (RC R C dt)
+  (lambda (inputs v0)
+    (define int
+      (cons-stream
+        v0
+        (add-streams (stream-scale inputs R)
+                     (integral (stream-scale inputs (/ 1.0 C)) (stream-car int) dt))))
+    int))
+
+(define RC1 (RC 5 1 0.5))
+(stream-head (RC1 integers 0) 10)
+
+(define (zero-crossings sense-data)
+  (stream-map sign-change-detector
+              sense-data
+              (cons-stream 0 sense-data)))
 
