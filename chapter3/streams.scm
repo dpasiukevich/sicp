@@ -146,7 +146,7 @@
   (cons-stream 1.0 (stream-map
                      (lambda (guess)
                        (sqrt-improve guess x))
-                     (sqrt-stream x))))
+                     (sqrt-stream-ineffective x))))
 
 (stream-head (sqrt-stream 180) 10)
 (stream-head (sqrt-stream-ineffective 180) 10)
@@ -259,4 +259,17 @@
   (stream-map sign-change-detector
               sense-data
               (cons-stream 0 sense-data)))
+
+(define (integral delayed-integrand initial-value dt)
+  (define int
+    (cons-stream
+      initial-value
+      (let ((integrand (force delayed-integrand)))
+       (add-streams (scale-stream integrand dt) int))))
+  int)
+
+(define (solve f y0 dt)
+  (define y (integral (delay dy) y0 dt))
+  (define dy (stream-map f y))
+  y)
 
