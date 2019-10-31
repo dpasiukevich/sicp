@@ -102,10 +102,10 @@
 
 ; OR
 (define (or? exp) (tagged-list? exp) 'or)
-(define (eval-and exp env)
-  (cond ((null? exp) true)
+(define (eval-or exp env)
+  (cond ((null? exp) false)
         ((true? (eval (car exp) env) true))
-        (eval-and (cdr exp) env)))
+        (eval-or (cdr exp) env)))
 
 ; BEGIN AND SEQUENCE OF EXPRESSIONS
 (define (make-begin seq) (cons 'begin seq))
@@ -146,6 +146,9 @@
 (define (cond-clauses exp) (cdr exp))
 (define (cond-else-clause? clause)
   (eq? (cond-predicate clause) 'else))
+(define (cond-rocket-clause? clause) (and (= (length clause) 3) (eq? (cadr clause) '=>)))
+(define (cond-rocket-test clause) (car clause))
+(define (cond-rocket-recipient clause) (caddr clause))
 (define (cond-predicate clause) (car clause))
 (define (cond-actions clause) (cdr clause))
 (define (cond->if exp) (expand-clauses (cond-clauses exp)))
@@ -154,13 +157,17 @@
       'false ; no else clause (let ((first (car clauses))
       (let ((first (car clauses))
             (rest (cdr clauses)))
-        (if (cond-else-clause? first)
-            (if (null? rest)
-                (sequence->exp (cond-actions first))
-                (error "ELSE clause isn't last -- COND->IF" clauses))
-            (make-if (cond-predicate first)
-                     (sequence->exp (cond-actions first))
-                     (expand-clauses rest))))))
+        (cond ((cond-else-clause? first)
+               (if (null? rest)
+                   (sequence->exp (cond-actions first))
+                   (error "ELSE clause isn't last -- COND->IF" clauses)))
+              ((cond-rocket-clause? first)
+               (make-if (cond-rocket-test first)
+                        (list (cond-rocket-recipient first) (cond-rocket-test first))
+                        (expand-clauses rest)))
+              (else make-if (cond-predicate first)
+                            (sequence->exp (cond-actions first))
+                            (expand-clauses rest))))))
 
 ; APPLICATION - any compound expression that is not defined explicitly
 (define (application? exp) (pair? exp))
