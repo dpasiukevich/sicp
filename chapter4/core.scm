@@ -7,6 +7,8 @@
         ((and? exp) (eval-and (cdr exp) env))
         ((or? exp) (eval-or (cdr exp) env))
         ((if? exp) (eval-if exp env))
+        ((let? exp) (eval (let->combination exp) env))
+        ((let*? exp) (eval (let*->nested-lets exp) env))
         ((lambda? exp)
          (make-procedure (lambda-parameters exp)
                          (lambda-body exp)
@@ -125,6 +127,23 @@
   (cond ((null? seq) seq)
         ((last-exp? seq) (first-exp seq))
         (else (make-begin seq))))
+
+; LET
+(define (make-let variables body) (list 'let variables body))
+(define (let? expr) (tagged-list? expr 'let))
+(define (let-variables expr) (map car (cadr expr)))
+(define (let-variables-values expr) (map cadr (cadr expr)))
+(define (let-body expr) (cddr expr))
+(define (let->combination expr)
+  (cons (make-lambda (let-variables expr) (let-body expr))
+        (let-variables-values expr)))
+
+(define (let*->nested-lets expr)
+  (define (nest variable-list body)
+    (if (null? variable-list)
+        (make-let variable-list body)
+        (make-let (list (car variable-list)) (nest (cdr variable-list) body))))
+  (nest (cadr expr) (caddr expr)))
 
 ; IF
 (define (eval-if exp env)
