@@ -1,3 +1,5 @@
+(define apply-in-underlying-scheme apply)
+
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
@@ -31,9 +33,8 @@
            (extend-environment
              (procedure-parameters procedure)
              arguments
-        (else(procedure-environment procedure))))
-         (error
-          "Unknown procedure type -- APPLY" procedure))))
+             (procedure-environment procedure))))
+        (else (error "Unknown procedure type: APPLY" procedure))))
 
 (define (true? x) (not (eq? x false)))
 (define (false? x) (eq? x false))
@@ -102,6 +103,36 @@
            (else (scan (cdr vars) (cdr vals)))))
    (scan (frame-variables frame) (frame-values frame))))
 
+
+(define (primitive-procedure? proc)
+  (tagged-list? proc 'primitive))
+(define (primitive-implementation proc) (cadr proc))
+
+(define primitive-procedures
+  (list (list 'car car)
+        (list 'cdr cdr)
+        (list 'cons cons)
+        (list 'null? null?)))
+(define (primitive-procedure-names)
+  (map car primitive-procedures))
+(define (primitive-procedure-objects)
+  (map (lambda (proc) (list 'primitive (cadr proc)))
+       primitive-procedures))
+(define (apply-primitive-procedure proc args)
+  (apply-in-underlying-scheme
+    (primitive-implementation proc) args))
+
+
+(define (setup-environment)
+  (let ((initial-env
+          (extend-environment (primitive-procedure-names)
+                              (primitive-procedure-objects)
+                              the-empty-environment)))
+    (define-variable! 'true true initial-env)
+    (define-variable! 'false false initial-env)
+    initial-env))
+(define the-global-environment (setup-environment))
+
 (define (list-of-values exps env)
   (if (no-operands? exps)
       '()
@@ -165,7 +196,7 @@
   (cons 'lambda (cons parameters body)))
 
 ; AND
-(define (and? exp) (tagged-list? exp) 'and)
+(define (and? exp) (tagged-list? exp 'and))
 (define (eval-and exp env)
   (cond ((null? exp) true)
         ((true? (eval (car exp) env)) 
@@ -173,7 +204,7 @@
         (else false)))
 
 ; OR
-(define (or? exp) (tagged-list? exp) 'or)
+(define (or? exp) (tagged-list? exp 'or))
 (define (eval-or exp env)
   (cond ((null? exp) false)
         ((true? (eval (car exp) env) true))
@@ -229,6 +260,8 @@
 ; TODO ADD FOR
 ; (for (lambda (cur) (...)) start stop step)
 
+; 4.12, 4.13
+
 ; IF
 (define (eval-if exp env)
   (if (true? (eval (if-predicate exp) env))
@@ -281,3 +314,30 @@
 (define (first-operand ops) (car ops))
 (define (rest-operands ops) (cdr ops))
 
+
+(define input-prompt ";;; M-Eval input:")
+(define output-prompt ";;; M-Eval value:")
+(define (driver-loop)
+  (prompt-for-input input-prompt)
+  (let ((input (read)))
+   (let ((output (eval input the-global-environment)))
+    (announce-output output-prompt)
+    (user-print output)))
+  (driver-loop))
+
+(define (prompt-for-input string)
+  (newline) (newline) (display string) (newline))
+(define (announce-output string)
+  (newline) (display string) (newline))
+
+(define (user-print object)
+  (if (compound-procedure? object)
+      (display (list 'compound-procedure
+                     (procedure-parameters object)
+                     (procedure-body object)
+                     '<procedure-env>))
+      (display object)))
+
+(define the-global-environment (setup-environment))
+
+(driver-loop)
