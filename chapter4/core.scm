@@ -112,7 +112,14 @@
   (list (list 'car car)
         (list 'cdr cdr)
         (list 'cons cons)
-        (list 'null? null?)))
+        (list 'null? null?)
+        (list 'eq? eq?)
+        (list 'equal? equal?)
+        (list '= =)
+        (list '+ +)
+        (list '- -)
+        (list '* *)
+        (list '/ /)))
 (define (primitive-procedure-names)
   (map car primitive-procedures))
 (define (primitive-procedure-objects)
@@ -121,7 +128,6 @@
 (define (apply-primitive-procedure proc args)
   (apply-in-underlying-scheme
     (primitive-implementation proc) args))
-
 
 (define (setup-environment)
   (let ((initial-env
@@ -195,20 +201,18 @@
 (define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))
 
-; AND
-(define (and? exp) (tagged-list? exp 'and))
-(define (eval-and exp env)
-  (cond ((null? exp) true)
-        ((true? (eval (car exp) env)) 
-         (eval-and (cdr exp) env))
-        (else false)))
+; AND, OR
+(define (chain-check predicate? value null-value)
+  (define (iter exp env)
+    (cond ((null? exp) null-value)
+          ((predicate? (eval (car exp) env)) value)
+          (else (iter (cdr exp) env))))
+  iter)
 
-; OR
+(define (and? exp) (tagged-list? exp 'and))
 (define (or? exp) (tagged-list? exp 'or))
-(define (eval-or exp env)
-  (cond ((null? exp) false)
-        ((true? (eval (car exp) env) true))
-        (eval-or (cdr exp) env)))
+(define eval-and (chain-check false? false true))
+(define eval-or (chain-check true? true false))
 
 ; BEGIN AND SEQUENCE OF EXPRESSIONS
 (define (make-begin seq) (cons 'begin seq))

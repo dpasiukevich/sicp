@@ -1,6 +1,0 @@
-(define (list-of-values exps env)
-  (if (no-operands? exps)
-      '()
-      (let ((first-value (eval (first-operand exps) env)))
-        (let ((other-values (list-of-values (rest-operands exps) env)))
-          (cons first-value other-values)))))
