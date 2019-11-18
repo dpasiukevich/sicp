@@ -9,6 +9,7 @@
         ((and? exp) (eval-and (cdr exp) env))
         ((or? exp) (eval-or (cdr exp) env))
         ((if? exp) (eval-if exp env))
+        ((for? exp) (eval (for->expr exp) env))
         ((let? exp) (eval (let->combination exp) env))
         ((let*? exp) (eval (let*->nested-lets exp) env))
         ((lambda? exp)
@@ -113,13 +114,17 @@
         (list 'cdr cdr)
         (list 'cons cons)
         (list 'null? null?)
+        (list 'not not)
         (list 'eq? eq?)
         (list 'equal? equal?)
+        (list '> >)
+        (list '< <)
         (list '= =)
         (list '+ +)
         (list '- -)
         (list '* *)
-        (list '/ /)))
+        (list '/ /)
+        (list 'disp display)))
 (define (primitive-procedure-names)
   (map car primitive-procedures))
 (define (primitive-procedure-objects)
@@ -211,6 +216,8 @@
 
 (define (and? exp) (tagged-list? exp 'and))
 (define (or? exp) (tagged-list? exp 'or))
+(define (make-and seq) (cons 'and seq))
+(define (make-or seq) (cons 'or seq))
 (define eval-and (chain-check false? false true))
 (define eval-or (chain-check true? true false))
 
@@ -235,6 +242,7 @@
 
 ; LET
 (define (make-let variables body) (list 'let variables body))
+(define (make-named-let name variables body) (list 'let name variables body))
 (define (let? expr) (tagged-list? expr 'let))
 (define (named-let? expr) (symbol? (cadr expr)))
 (define (let-name expr) (cadr expr))
@@ -253,6 +261,7 @@
              ())
        (cons func var-values))))
 
+(define (make-let* variables body) (list 'let* variables body))
 (define (let*? expr) (tagged-list? expr 'let*))
 (define (let*->nested-lets expr)
   (define (nest variable-list body)
@@ -261,8 +270,27 @@
         (make-let (list (car variable-list)) (nest (cdr variable-list) body))))
   (nest (cadr expr) (caddr expr)))
 
-; TODO ADD FOR
-; (for (lambda (cur) (...)) start stop step)
+; FOR
+; func prototype (for func start stop step)
+; provided func must have 1 argument arity
+; provided func should be used only for its side-effects
+(define (for? exp) (tagged-list? exp 'for))
+(define (for-func expr) (cadr expr))
+(define (for-start expr) (caddr expr))
+(define (for-stop expr) (cadddr expr))
+(define (for-step expr) (cadddr (cdr expr)))
+(define (for->expr expr)
+  (let ((stop (for-stop expr))
+        (step (for-step expr))
+        (func (for-func expr))
+        (check-func (if (< (for-start expr) (for-stop expr)) '< '>)))
+    (make-named-let 'iter-func (list (list 'cur (for-start expr)))
+              (make-if (list check-func 'cur stop)
+                       (make-begin (list
+                                     (list func 'cur)
+                                     (list 'iter-func
+                                           (list '+ 'cur step))))
+                       'cur))))
 
 ; 4.12, 4.13
 
@@ -305,9 +333,9 @@
                (make-if (cond-rocket-test first)
                         (list (cond-rocket-recipient first) (cond-rocket-test first))
                         (expand-clauses rest)))
-              (else make-if (cond-predicate first)
-                            (sequence->exp (cond-actions first))
-                            (expand-clauses rest))))))
+              (else (make-if (cond-predicate first)
+                             (sequence->exp (cond-actions first))
+                             (expand-clauses rest)))))))
 
 
 ; APPLICATION - any compound expression that is not defined explicitly
