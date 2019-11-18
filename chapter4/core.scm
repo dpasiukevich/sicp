@@ -104,7 +104,6 @@
            (else (scan (cdr vars) (cdr vals)))))
    (scan (frame-variables frame) (frame-values frame))))
 
-
 (define (primitive-procedure? proc)
   (tagged-list? proc 'primitive))
 (define (primitive-implementation proc) (cadr proc))
@@ -291,8 +290,6 @@
                                      (list 'iter-func
                                            (list '+ 'cur step))))
                        'cur))))
-
-; 4.12, 4.13
 
 ; IF
 (define (eval-if exp env)
