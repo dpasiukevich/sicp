@@ -15,11 +15,20 @@
 
 (define sequence (make-begin (gen-sequence 100000)))
 
+(define x '((lambda () (define (loop n) (if (> n 0) (loop (- n 1)))) (loop 100000))))
+
 (load "core.scm")
 (load "eval-old.scm")
-(display (time-func (lambda () (eval sequence the-global-environment)))) (newline)
+
+; takes 10s
+(display (time-func (lambda () (eval x the-global-environment)))) (newline)
 
 (load "core.scm")
 (load "eval-analyze.scm")
-(display (time-func (lambda () (eval sequence the-global-environment)))) (newline)
 
+; 5.7 s
+(display (time-func (lambda () (eval x the-global-environment)))) (newline)
+
+((lambda () (define x 3) (+ x 1)))
+
+((lambda () (+ 3 2)))

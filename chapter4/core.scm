@@ -1,4 +1,4 @@
-(load "eval-analyze.scm")
+;(load "eval-analyze.scm")
 ;(load "eval-old.scm")
 
 (define apply-in-underlying-scheme apply)
@@ -24,7 +24,7 @@
 ; flows simultaneusly
 (define (make-procedure parameters body env)
   ;(list 'procedure parameters (scan-out-defines body) env))
-  (list 'procedure parameters env)) 
+  (list 'procedure parameters body env))
 (define (compound-procedure? p)
   (tagged-list? p 'procedure))
 (define (procedure-parameters p) (cadr p))
