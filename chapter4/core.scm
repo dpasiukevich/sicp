@@ -22,6 +22,7 @@
         ((application? exp)
          (apply (eval (operator exp) env)
                 (list-of-values (operands exp) env)))
+        ((null? exp) exp)
         (else
          (error "Unknown expression type -- EVAL" exp))))
 
@@ -40,8 +41,20 @@
 (define (true? x) (not (eq? x false)))
 (define (false? x) (eq? x false))
 
+(define (scan-out-defines body)
+  (let ((defs (filter definition? body)))
+   (if (null? defs)
+       body
+       (let* ((defs-vars (map definition-variable defs))
+              (defs-vals (map definition-value defs))
+              (unassigned-vars (map (lambda (var) (list var ''*unassigned*)) defs-vars))
+              (assignments (map (lambda (var val) (list 'set! var val)) defs-vars defs-vals))
+              (other-expressions (filter (lambda (e) (not (definition? e))) body)))
+         (list (make-let unassigned-vars
+                         (make-begin (append assignments other-expressions))))))))
+
 (define (make-procedure parameters body env)
-  (list 'procedure parameters body env))
+  (list 'procedure parameters (scan-out-defines body) env))
 (define (compound-procedure? p)
   (tagged-list? p 'procedure))
 (define (procedure-parameters p) (cadr p))
@@ -79,7 +92,10 @@
         (let ((frame (first-frame env)))
          (scan (frame-variables frame)
                (frame-values frame)))))
-  (env-loop env))
+  (let ((val (env-loop env)))
+   (if (eq? val '*unassigned*)
+       (error "Usage of unassigned variable" var)
+       val)))
 
 (define (set-variable-value! var val env)
   (define (env-loop env)
@@ -141,7 +157,6 @@
     (define-variable! 'true true initial-env)
     (define-variable! 'false false initial-env)
     initial-env))
-(define the-global-environment (setup-environment))
 
 (define (list-of-values exps env)
   (if (no-operands? exps)
@@ -269,6 +284,17 @@
         (make-let (list (car variable-list)) (nest (cdr variable-list) body))))
   (nest (cadr expr) (caddr expr)))
 
+(define (letrec? expr) (tagged-list? expr 'letrec))
+(define (letrec-inits expr) (cadr expr))
+(define (letrec-body expr) (cddr expr))
+(define (declare-variables expr)
+  (map (lambda (x) (list (car x) '*unassigned*)) (letrec-inits expr)))
+(define (set-variables expr)
+  (map (lambda (x) (list 'set! (car x) (cadr x))) (letrec-inits expr)))
+(define (letrec->let expr)
+  (list 'let (declare-variables expr)
+        (make-begin (append (set-variables expr) (letrec-body expr)))))
+
 ; FOR
 ; func prototype (for func start stop step)
 ; provided func must have 1 argument arity
@@ -370,3 +396,4 @@
 (define the-global-environment (setup-environment))
 
 (driver-loop)
+
