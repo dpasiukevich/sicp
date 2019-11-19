@@ -20,7 +20,6 @@
         ((application? exp)
          (apply (eval (operator exp) env)
                 (list-of-values (operands exp) env)))
-        ((null? exp) exp)
         (else
          (error "Unknown expression type -- EVAL" exp))))
 
