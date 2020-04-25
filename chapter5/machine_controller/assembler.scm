@@ -37,7 +37,7 @@
             labels machine pc flag stack ops))
 
         )
-      insts)))
+      insts))
 
 (define (make-instruction text) (cons text '()))
 (define (instruction-text inst) (car inst))
