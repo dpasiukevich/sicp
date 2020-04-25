@@ -15,10 +15,12 @@
         (lambda (insts labels)
           (let ((next-inst (car text)))
            (if (symbol? next-inst)
-               (receive insts
-                        (cons (make-label-entry next-inst
-                                                insts)
-                              labels))
+               (if (assoc next-inst labels)
+                   (error "LABEL IS ALREADY USED: ASSEMBLE" next-inst)
+                   (receive insts
+                            (cons (make-label-entry next-inst
+                                                    insts)
+                                  labels)))
                (receive (cons (make-instruction next-inst)
                               insts)
                         labels)))))))
