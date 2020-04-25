@@ -33,11 +33,11 @@
     (for-each
       (lambda (inst)
         (set-instruction-execution-proc!
+          inst
+          (make-execution-procedure
             (instruction-text inst)
-            labels machine pc flag stack ops))
-
-        )
-      insts))
+            labels machine pc flag stack ops)))
+      insts)))
 
 (define (make-instruction text) (cons text '()))
 (define (instruction-text inst) (car inst))
@@ -210,3 +210,8 @@
        (cadr val)
        (error "Unknown operation: ASSEMBLE"
               symbol))))
+
+(define (tagged-list? exp tag)
+  (if (pair? exp)
+      (eq? (car exp) tag)
+      false))
