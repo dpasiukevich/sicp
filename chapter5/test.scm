@@ -60,7 +60,8 @@
     )))
 (machine-info fib-machine)
 
-(set-register-contents! fib-machine 'n 12)
+(set-register-contents! fib-machine 'n 3)
+;(trace-on fib-machine)
 (start fib-machine)
 (get-register-contents fib-machine 'val) 
 (print-instruction-count fib-machine)
