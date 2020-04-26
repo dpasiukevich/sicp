@@ -83,7 +83,7 @@
         (let ((val (assoc name register-table)))
          (if val
              (cadr val)
-             (allocate-register name))))
+             (begin (allocate-register name) (lookup-register name)))))
       (define (execute)
         (let ((insts (get-contents pc)))
          (if (null? insts)
