@@ -142,17 +142,20 @@
   (cadr goto-instruction))
 
 (define (make-save inst machine stack pc)
-  (let ((reg (get-register machine
-                           (stack-inst-reg-name inst))))
+  (let* ((reg-name (stack-inst-reg-name inst))
+         (reg (get-register machine reg-name)))
     (lambda ()
-      (push stack (get-contents reg))
+      (push stack (cons reg-name (get-contents reg)))
       (advance-pc pc))))
 (define (make-restore inst machine stack pc)
-  (let ((reg (get-register machine
-                           (stack-inst-reg-name inst))))
+  (let* ((reg-name (stack-inst-reg-name inst))
+         (reg (get-register machine reg-name)))
     (lambda ()
-      (set-contents! reg (pop stack))
-      (advance-pc pc))))
+      (let ((top (pop stack)))
+       (if (not (eq? reg-name (car top)))
+           (error "STACK HEAD CONTAINS ANOTHER REGISTER: RESTORE" reg-name "GOT:" (car top)))
+       (set-contents! reg (cdr top))
+       (advance-pc pc)))))
 (define (stack-inst-reg-name stack-instruction)
   (cadr stack-instruction))
 
