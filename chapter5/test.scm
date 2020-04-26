@@ -55,7 +55,9 @@
     immediate-answer
       (assign val (reg n)) ; base case: Fib(n) = n
       (goto (reg continue))
-    fib-done)))
+    fib-done
+    (perform (op print-stack-statistics))
+    )))
 (machine-info fib-machine)
 
 (set-register-contents! fib-machine 'n 12)
