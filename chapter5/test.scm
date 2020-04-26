@@ -63,3 +63,4 @@
 (set-register-contents! fib-machine 'n 12)
 (start fib-machine)
 (get-register-contents fib-machine 'val) 
+(print-instruction-count fib-machine)

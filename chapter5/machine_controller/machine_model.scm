@@ -64,7 +64,8 @@
   (let ((pc (make-register 'pc))
         (flag (make-register 'flag))
         (stack (make-stack))
-        (the-instruction-sequence '()))
+        (the-instruction-sequence '())
+        (instruction-count 0))
     (let ((the-ops
             (list (list 'initialize-stack
                         (lambda () (stack 'initialize)))
@@ -89,6 +90,7 @@
          (if (null? insts)
              'done
              (begin
+               (set! instruction-count (+ instruction-count 1))
                ((instruction-execution-proc (car insts)))
                (execute)))))
       (define (machine-info)
@@ -121,6 +123,7 @@
          (for-each (lambda (l) (display (car l)) (newline) (print-list-newline (cdr l))) (sort (hash-table->alist t) (lambda (e1 e2) (symbol<? (car e1) (car e2)))))
          )
         )
+      (define (print-instruction-count) (display "instruction count: ") (display instruction-count) (newline) (set! instruction-count 0))
       (define (dispatch message)
         (cond ((eq? message 'start)
                (set-contents! pc the-instruction-sequence)
@@ -138,6 +141,7 @@
               ((eq? message 'stack) stack)
               ((eq? message 'operations) the-ops)
               ((eq? message 'machine-info) machine-info)
+              ((eq? message 'print-instruction-count) print-instruction-count)
               (else (error "Unknown request: MACHINE"
                            message))))
       dispatch)))
@@ -154,3 +158,5 @@
   ((machine 'get-register) reg-name))
 
 (define (machine-info machine) ((machine 'machine-info)))
+
+(define (print-instruction-count machine) ((machine 'print-instruction-count)))

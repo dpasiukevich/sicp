@@ -21,3 +21,4 @@
 (set-register-contents! fact-machine 'p 1)
 (start fact-machine)
 (get-register-contents fact-machine 'p)
+(print-instruction-count fact-machine)
