@@ -41,12 +41,15 @@
             labels machine pc flag stack ops)))
       insts)))
 
-(define (make-instruction text labels) (list text '() labels))
+(define (make-instruction text labels) (list text '() labels #f))
 (define (instruction-text inst) (car inst))
 (define (instruction-execution-proc inst) (cadr inst))
 (define (set-instruction-execution-proc! inst proc)
   (set-car! (cdr inst) proc))
 (define (instruction-preceding-labels inst) (caddr inst))
+(define (instruction-with-break? inst) (cadddr inst))
+(define (instruction-set-break! inst) (set-car! (cdddr inst) #t))
+(define (instruction-remove-break! inst) (set-car! (cdddr inst) #f))
 
 (define (make-label-entry label-name insts)
   (cons label-name insts))

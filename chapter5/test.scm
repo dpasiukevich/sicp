@@ -21,7 +21,17 @@
 
 (set-register-contents! gcd-machine 'a 126)
 (set-register-contents! gcd-machine 'b 84)
+
+(machine-set-breakpoint gcd-machine 'test-b 3)
+
+;(machine-cancel-breakpoint gcd-machine 'test-b 3)
+(machine-cancel-all-breakpoints gcd-machine)
+
 (start gcd-machine)
+
+(set-register-contents! gcd-machine 'a 8)
+(machine-proceed gcd-machine)
+
 (get-register-contents gcd-machine 'a) 
 
 (define fib-machine
@@ -62,6 +72,11 @@
 
 (set-register-contents! fib-machine 'n 2)
 (trace-on fib-machine)
+
+(machine-set-breakpoint fib-machine 'afterfib-n-1 4)
+
 (start fib-machine)
 (get-register-contents fib-machine 'val) 
 (print-instruction-count fib-machine)
+
+(machine-proceed fib-machine)
