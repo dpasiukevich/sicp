@@ -1,3 +1,5 @@
+(load "assembler.scm")
+
 (define (make-machine register-names ops controller-text)
   (let ((machine (make-new-machine)))
    (for-each
@@ -74,6 +76,20 @@
              (begin
                ((instruction-execution-proc (car insts)))
                (execute)))))
+      (define (machine-info)
+        (define (print-header header) (display header) (newline) (display "================") (newline))
+        (newline)
+        (print-header "INSTRUCTIONS:")
+        (for-each (lambda (i) (display i) (newline)) (sort (delete-duplicates (map instruction-text the-instruction-sequence)) (lambda (i1 i2) (symbol<? (car i1) (car i2)))))
+        (print-header "REGISTERS:")
+        (display (sort (map car register-table) symbol<?)) (newline)
+        (print-header "ENTRY REGISTERS:")
+        (display (sort (delete-duplicates (map (lambda (inst) (register-exp-reg (goto-dest inst)))
+                                               (filter (lambda (inst) (and (eq? (car inst) 'goto)
+                                                                           (register-exp? (goto-dest inst))))
+                                                       (map car the-instruction-sequence))))
+                       symbol<?))
+        )
       (define (dispatch message)
         (cond ((eq? message 'start)
                (set-contents! pc the-instruction-sequence)
@@ -90,6 +106,7 @@
                  (set! the-ops (append the-ops ops))))
               ((eq? message 'stack) stack)
               ((eq? message 'operations) the-ops)
+              ((eq? message 'machine-info) machine-info)
               (else (error "Unknown request: MACHINE"
                            message))))
       dispatch)))
@@ -104,3 +121,5 @@
 
 (define (get-register machine reg-name)
   ((machine 'get-register) reg-name))
+
+(define (machine-info machine) ((machine 'machine-info)))

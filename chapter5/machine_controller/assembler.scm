@@ -1,5 +1,3 @@
-(load "machine_model.scm")
-
 (define (assemble controller-text machine)
   (extract-labels
     controller-text
