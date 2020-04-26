@@ -57,13 +57,14 @@
       (restore val) ; val now contains Fib(n   1)
       (restore continue)
       (assign val ; Fib(n   1) + Fib(n   2)
-      (op +) (reg val) (reg n))
+        (op +) (reg val) (reg n))
       (goto (reg continue)) ; return to caller, answer is in val
     immediate-answer
       (assign val (reg n)) ; base case: Fib(n) = n
       (goto (reg continue))
     fib-done)))
+(machine-info fib-machine)
 
-(set-register-contents! fib-machine 'n 10)
+(set-register-contents! fib-machine 'n 12)
 (start fib-machine)
 (get-register-contents fib-machine 'val) 
