@@ -156,11 +156,11 @@
               ((eq? message 'print-instruction-count) print-instruction-count)
               ((eq? message 'trace-on) (lambda ()
                                          (set! trace? #t)
-                                         (for-each (lambda (r) (display r) (register-trace-on r)) (map cadr register-table))
+                                         ; (for-each (lambda (r) (display r) (register-trace-on r)) (map cadr register-table))
                                          'trace-on))
               ((eq? message 'trace-off) (lambda ()
                                           (set! trace? #f)
-                                          (for-each (lambda (r) (register-trace-off r)) (map cadr register-table))
+                                          ; (for-each (lambda (r) (register-trace-off r)) (map cadr register-table))
                                           'trace-off))
               (else (error "Unknown request: MACHINE"
                            message))))
