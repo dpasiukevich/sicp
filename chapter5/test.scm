@@ -2,16 +2,10 @@
 (load "machine_model.scm")
 
 (define test-machine
-  (make-machine
-    '(a b t)
-    '()
-    '()
-    )
-  )
+  (make-machine '() '()))
 
 (define gcd-machine
   (make-machine
-    '(a b t)
     (list (list 'rem remainder) (list '= =))
     '(test-b (test (op =) (reg b) (const 0))
              (branch (label gcd-done))
@@ -32,7 +26,6 @@
 
 (define fib-machine
   (make-machine
-    '(continue n val)
     (list (list '+ +) (list '- -) (list '< <))
     '(
       (assign continue (label fib-done))
