@@ -3,9 +3,10 @@
     controller-text
     (lambda (insts labels)
       (update-insts! insts labels machine)
-      insts)))
+      insts)
+    '()))
 
-(define (extract-labels text receive)
+(define (extract-labels text receive preceding-labels)
   (if (null? text)
       (receive '() '())
       (extract-labels
@@ -19,9 +20,12 @@
                             (cons (make-label-entry next-inst
                                                     insts)
                                   labels)))
-               (receive (cons (make-instruction next-inst)
+               (receive (cons (make-instruction next-inst preceding-labels)
                               insts)
-                        labels)))))))
+                        labels))))
+        (if (symbol? (car text))
+            (cons (car text) preceding-labels)
+            preceding-labels))))
 
 (define (update-insts! insts labels machine)
   (let ((pc (get-register machine 'pc))
@@ -37,11 +41,12 @@
             labels machine pc flag stack ops)))
       insts)))
 
-(define (make-instruction text) (cons text '()))
+(define (make-instruction text labels) (list text '() labels))
 (define (instruction-text inst) (car inst))
-(define (instruction-execution-proc inst) (cdr inst))
+(define (instruction-execution-proc inst) (cadr inst))
 (define (set-instruction-execution-proc! inst proc)
-  (set-cdr! inst proc))
+  (set-car! (cdr inst) proc))
+(define (instruction-preceding-labels inst) (caddr inst))
 
 (define (make-label-entry label-name insts)
   (cons label-name insts))

@@ -92,7 +92,9 @@
              'done
              (begin
                (set! instruction-count (+ instruction-count 1))
-               (if trace? (begin (display (instruction-text (car insts))) (newline)))
+               (if trace? (begin (display (instruction-text (car insts)))
+                                 (display " | labels: ")
+                                 (display (instruction-preceding-labels (car insts))) (newline)))
                ((instruction-execution-proc (car insts)))
                (execute)))))
       (define (machine-info)
