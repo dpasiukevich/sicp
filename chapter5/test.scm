@@ -70,13 +70,17 @@
     )))
 (machine-info fib-machine)
 
-(set-register-contents! fib-machine 'n 2)
+(set-register-contents! fib-machine 'n 5)
 (trace-on fib-machine)
 
 (machine-set-breakpoint fib-machine 'afterfib-n-1 4)
 
+(machine-cancel-breakpoint fib-machine 'afterfib-n-1 4)
+
 (start fib-machine)
-(get-register-contents fib-machine 'val) 
+(get-register-contents fib-machine 'val)
 (print-instruction-count fib-machine)
 
 (machine-proceed fib-machine)
+
+(get-register-contents fib-machine 'val)
