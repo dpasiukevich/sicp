@@ -1,6 +1,10 @@
 (load "assembler.scm")
 (load "evaluator_machine.scm")
+
+(define f '(define (factorial n) (if (= n 1) 1 (* (factorial (- n 1)) n))))
 (assemble (statements (compile f 'val 'return)) eceval)
+
+(pp (statements (compile f 'val 'return)))
 
 (define (compile-and-go expression)
   (let ((instructions
@@ -8,15 +12,15 @@
             (statements
               (compile expression 'val 'return))
             eceval)))
-    (pp instructions)
     (set! the-global-environment (setup-environment))
     (set-register-contents! eceval 'val instructions)
     (set-register-contents! eceval 'flag true)
     (start eceval)))
 
-(define f '(define (factorial n) (if (= n 1) 1 (* (factorial (- n 1)) n))))
 
 (compile f 'val 'return)
+
+(pp (compile f 'val 'return))
 
 (statements (compile f 'val 'return))
 

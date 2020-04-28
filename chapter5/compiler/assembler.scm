@@ -201,7 +201,6 @@
                          operations))
         (aprocs
           (map (lambda (e)
-                 (if (label-exp? e) (begin (display "USING LABEL AS OPERAND. OP: ") (display (operation-exp-op)) (display " ") (display (label-exp-label e)) (newline)))
                  (make-primitive-exp e machine labels))
                (operation-exp-operands exp))))
     (lambda ()
