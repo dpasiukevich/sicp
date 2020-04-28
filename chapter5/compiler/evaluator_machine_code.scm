@@ -15,11 +15,16 @@
     (perform (op user-print) (reg val))
     (goto (label read-eval-print-loop))
 
-   external-entry
-    (perform (op initialize-stack))
-    (assign env (op get-global-environment))
-    (assign continue (label print-result))
-    (goto (reg val))
+  external-entry
+   (perform (op initialize-stack))
+   (assign env (op get-global-environment))
+   (assign continue (label print-result))
+   (goto (reg val))
+
+  ev-compile-and-run
+   (assign val (op compile-and-run-exp) (reg exp))
+   (assign val (op compile-and-run) (reg val))
+   (goto (label external-entry))
 
   unknown-expression-type
     (assign val (const unknown-expression-type-error))
@@ -53,6 +58,8 @@
     (branch (label ev-lambda))
     (test (op begin?) (reg exp))
     (branch (label ev-begin))
+    (test (op compile-and-run?) (reg exp))
+    (branch (label ev-compile-and-run))
     (test (op application?) (reg exp))
     (branch (label ev-application))
     (goto (label unknown-expression-type))

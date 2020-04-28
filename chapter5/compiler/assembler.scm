@@ -224,3 +224,14 @@
   (if (pair? exp)
       (eq? (car exp) tag)
       false))
+
+(define (compile-and-run expression)
+  (assemble (statements
+              (compile expression 'val 'return))
+            eceval))
+
+(define (compile-and-run? exp)
+  (tagged-list? exp 'compile-and-run))
+
+(define (compile-and-run-exp exp)
+  (cadadr exp))
